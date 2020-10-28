@@ -1,9 +1,14 @@
+import Phaser from "phaser";
 import Map from "../classes/Map";
 import Player from "../classes/Player";
 
 class GameScene extends Phaser.Scene {
   constructor() {
     super("Game");
+  }
+
+  init() {
+    this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   preload() {
@@ -21,6 +26,10 @@ class GameScene extends Phaser.Scene {
       this.map.tilemap.heightInPixels,
     );
     this.cameras.main.startFollow(this.player.car);
+  }
+
+  update() {
+    this.player.move();
   }
 }
 
