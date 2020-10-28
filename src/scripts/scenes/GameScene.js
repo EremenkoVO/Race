@@ -1,3 +1,5 @@
+import Map from "../classes/Map";
+
 class GameScene extends Phaser.Scene {
   constructor() {
     super("Game");
@@ -7,7 +9,9 @@ class GameScene extends Phaser.Scene {
     this.add.sprite(0, 0, "bg").setOrigin(0);
   }
 
-  create() {}
+  create() {
+    this.map = new Map(this);
+  }
 }
 
 export default GameScene;

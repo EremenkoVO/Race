@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import LoadingBar from "../classes/LoadingBar";
+import tilesetPng from "../../assets/sprites/tileset.png";
+import tilemapJson from "../../assets/sprites/tilemap.json";
 
 class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -9,6 +11,12 @@ class PreloadScene extends Phaser.Scene {
   preload() {
     this.add.sprite(0, 0, "bg").setOrigin(0);
     this.LoadingBar = new LoadingBar(this);
+
+    this.load.spritesheet("tileset", tilesetPng, {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+    this.load.tilemapTiledJSON("tilemap", tilemapJson);
   }
 
   create() {
