@@ -41,4 +41,10 @@ export default class Map {
       sprite.setStatic(true);
     });
   }
+
+  getPlayerPosition() {
+    return this.tilemap.findObject("player", (position) => {
+      return position.name === "player";
+    });
+  }
 }
