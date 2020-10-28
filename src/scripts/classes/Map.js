@@ -18,9 +18,27 @@ export default class Map {
   }
 
   create() {
+    this.createLayers();
+    this.createCollisions();
+  }
+
+  createLayers() {
     this.tilemap.createStaticLayer("grass", this.tileset);
     this.tilemap.createStaticLayer("road", this.tileset);
     this.tilemap.createStaticLayer("sand", this.tileset);
     this.tilemap.createStaticLayer("ground", this.tileset);
+  }
+
+  createCollisions() {
+    this.tilemap.findObject("collisions", (collision) => {
+      const sprite = this.scene.matter.add.sprite(
+        collision.x,
+        collision.y,
+        "objects",
+        collision.name,
+      );
+      sprite.setOrigin(0, 1);
+      sprite.setStatic(true);
+    });
   }
 }
