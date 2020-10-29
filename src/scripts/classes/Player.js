@@ -16,6 +16,12 @@ export default class Player {
     );
     this.car.setFixedRotation(true);
     this._velocity = 0;
+    this.checpoint = 0;
+    this.laps = 0;
+  }
+
+  get lap() {
+    return this.laps + 1;
   }
 
   get direction() {
@@ -32,10 +38,14 @@ export default class Player {
 
   get velocity() {
     const speed = Math.abs(this._velocity);
+    const max = this.getMaxSpeed();
 
-    if (this.direction && speed < SPEED) {
+    if (this.direction && speed < max) {
       this._velocity += ACCELERATION * Math.sign(this.direction);
-    } else if (!this.direction && speed > 0) {
+    } else if (
+      (this.direction && speed > max) ||
+      (!this.direction && speed > 0)
+    ) {
       this._velocity -= ACCELERATION * Math.sign(this._velocity);
     }
 
@@ -63,9 +73,31 @@ export default class Player {
     return vec2.setToPolar(this.car.rotation - Math.PI / 2, this.velocity);
   }
 
+  getMaxSpeed() {
+    return SPEED * this.map.getTileFriction(this.car);
+  }
+
   move() {
     this.car.setAngle(this.angle);
     const velocity = this.getVelocityFromAngle();
     this.car.setVelocity(velocity.x, velocity.y);
+    this.checkPositions();
+  }
+
+  checkPositions() {
+    const checpoint = this.map.getCheckpoint(this.car);
+    if (checpoint) {
+      this.onCheckpoint(checpoint);
+    }
+  }
+
+  onCheckpoint(checpoint) {
+    if (checpoint === 1 && this.checpoint === this.map.checkpoints.length) {
+      this.checpoint = 1;
+      ++this.laps;
+      this.car.emit("lap", this.lap);
+    } else if (checpoint === this.checpoint + 1) {
+      ++this.checpoint;
+    }
   }
 }

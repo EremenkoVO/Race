@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import Map from "../classes/Map";
 import Player from "../classes/Player";
 
+const LAPS = 3;
+
 class GameScene extends Phaser.Scene {
   constructor() {
     super("Game");
@@ -26,6 +28,14 @@ class GameScene extends Phaser.Scene {
       this.map.tilemap.heightInPixels,
     );
     this.cameras.main.startFollow(this.player.car);
+
+    this.player.car.on("lap", this.onLapComplete, this);
+  }
+
+  onLapComplete(lap) {
+    if (lap > LAPS) {
+      this.scene.restart();
+    }
   }
 
   update() {
