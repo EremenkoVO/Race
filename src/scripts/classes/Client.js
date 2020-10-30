@@ -8,6 +8,7 @@ export default class Client extends Phaser.Events.EventEmitter {
   }
 
   init() {
+    this.master = false;
     const socket = socketIO(HOST);
     socket.on("connect", () => {
       console.log("client connected");
@@ -16,7 +17,10 @@ export default class Client extends Phaser.Events.EventEmitter {
       console.log("client disconnected");
     });
 
-    socket.on("gameStart", () => {
+    socket.on("gameStart", (data) => {
+      if (data && data.master) {
+        this.master = data.master;
+      }
       this.emit("game");
     });
   }

@@ -5,15 +5,15 @@ const ACCELERATION = 0.5;
 const SLIDE_ANGLE = 5;
 
 export default class Player {
-  constructor(scene, map) {
+  constructor(scene, map, config) {
     this.scene = scene;
     this.map = map;
-    const position = this.map.getPlayerPosition();
+    const position = this.map.getPlayerPosition(config.position);
     this.car = this.scene.matter.add.sprite(
       position.x,
       position.y,
       "objects",
-      "car_blue_1",
+      config.sprite,
     );
     this.car.setFixedRotation(true);
     this._velocity = 0;

@@ -80,9 +80,9 @@ export default class Map {
     });
   }
 
-  getPlayerPosition() {
-    return this.tilemap.findObject("player", (position) => {
-      return position.name === "player";
+  getPlayerPosition(positionName) {
+    return this.tilemap.findObject(positionName, (position) => {
+      return position.name === positionName;
     });
   }
 
