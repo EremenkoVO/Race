@@ -18,11 +18,6 @@ export default class Player {
     this.car.setFixedRotation(true);
     this._velocity = 0;
     this.checpoint = 0;
-    this.laps = 0;
-  }
-
-  get lap() {
-    return this.laps + 1;
   }
 
   get direction() {
@@ -99,8 +94,7 @@ export default class Player {
   onCheckpoint(checpoint) {
     if (checpoint === 1 && this.checpoint === this.map.checkpoints.length) {
       this.checpoint = 1;
-      ++this.laps;
-      this.car.emit("lap", this.lap);
+      this.car.emit("lap");
     } else if (checpoint === this.checpoint + 1) {
       ++this.checpoint;
     }

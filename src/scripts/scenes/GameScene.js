@@ -1,8 +1,11 @@
 import Phaser from "phaser";
 import Map from "../classes/Map";
 import Player from "../classes/Player";
+import Stats from "../classes/Stats";
+import StatsPanel from "../classes/StatsPanel";
+import StatsPopup from "../classes/StatsPopup";
 
-const LAPS = 3;
+const LAPS = 1;
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -20,6 +23,8 @@ class GameScene extends Phaser.Scene {
   create() {
     this.map = new Map(this);
     this.player = new Player(this, this.map);
+    this.stats = new Stats(this, LAPS);
+    this.statsPanel = new StatsPanel(this, this.stats);
 
     this.cameras.main.setBounds(
       0,
@@ -40,13 +45,17 @@ class GameScene extends Phaser.Scene {
     });
   }
 
-  onLapComplete(lap) {
-    if (lap > LAPS) {
-      this.scene.restart();
+  onLapComplete() {
+    this.stats.onLapComplete();
+
+    if (this.stats.complete) {
+      this.statsPopup = new StatsPopup(this, this.stats);
     }
   }
 
-  update() {
+  update(time, dt) {
+    this.stats.update(dt);
+    this.statsPanel.render();
     this.player.move();
   }
 }
