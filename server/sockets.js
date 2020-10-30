@@ -3,20 +3,40 @@ const socketIO = require("socket.io");
 module.exports = {
   init(server) {
     // socket
-    this.session = [];
+    this.sessions = [];
     const io = socketIO(server);
     io.on("connection", (socket) => {
+      socket.on("playerMove", (data) => {
+        this.onPlayerMove(socket, data);
+      });
       this.onConnetion(socket);
     });
   },
+  onPlayerMove(socket, data) {
+    const session = this.sessions.find(
+      (session) =>
+        session.playerSocket === socket || session.enemySocket === socket,
+    );
+
+    if (session) {
+      let opponentSocket;
+
+      if (session.playerSocket === socket) {
+        opponentSocket = session.enemySocket;
+      } else {
+        opponentSocket = session.playerSocket;
+      }
+      opponentSocket.emit("enemyMove", data);
+    }
+  },
   getPendingSession() {
-    return this.session.find((session) => {
+    return this.sessions.find((session) => {
       return session.playerSocket && !session.enemySocket;
     });
   },
   createPendingSession(socket) {
     const session = { playerSocket: socket, enemySocket: null };
-    this.session.push(session);
+    this.sessions.push(session);
   },
   startGame(session) {
     session.playerSocket.emit("gameStart", { master: true });
