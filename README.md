@@ -13,13 +13,16 @@
 ---
 
 Установка приложения
-
 ```sh
 npm install
 ```
 
-Запуск приложения
-
+Сборка приложения
 ```sh
-npm run dev
+npm run build
+```
+
+Запуск
+```sh
+node server.js
 ```
