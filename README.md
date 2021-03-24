@@ -26,3 +26,9 @@ npm run build
 ```sh
 node server.js
 ```
+
+Сборка и запуск игры в контейнере
+```sh
+docker build -f server.dockerfile . -t race:v0.0.$version
+docker run -d -p 8080:3000 race:v0.0.$version
+```
