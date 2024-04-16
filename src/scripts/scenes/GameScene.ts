@@ -85,7 +85,7 @@ export default class GameScene extends Phaser.Scene {
     this.player.car.on('lap', this.onLapComplete, this);
     this.matter.world.on(
       'collisionactive',
-      (event: any, a: any, b: any): void => {
+      (_event: any, a: any, b: any): void => {
         if (
           b.gameObject === this.player.car &&
           a.gameObject.frame.name === 'oil'
@@ -104,7 +104,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  update(time: number, dt: number) {
+  update(_time: number, dt: number) {
     this.stats.update(dt);
     this.statsPanel.render();
     this.player.move();
