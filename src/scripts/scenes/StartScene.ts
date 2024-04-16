@@ -1,8 +1,12 @@
-import Client from "../classes/Client";
+import Client from '../classes/Client';
 
 export default class StartScene extends Phaser.Scene {
+  private button1!: Phaser.GameObjects.Text;
+  private button2!: Phaser.GameObjects.Text;
+  private client: any;
+
   constructor() {
-    super("Start");
+    super('Start');
   }
 
   create() {
@@ -12,7 +16,7 @@ export default class StartScene extends Phaser.Scene {
   }
 
   Background() {
-    this.add.sprite(0, 0, "bg").setOrigin(0);
+    this.add.sprite(0, 0, 'bg').setOrigin(0);
   }
 
   createButtons() {
@@ -20,10 +24,10 @@ export default class StartScene extends Phaser.Scene {
       .text(
         this.cameras.main.centerX,
         this.cameras.main.centerY - 50,
-        "ONE PLAYER",
+        'ONE PLAYER',
         {
-          font: "bold 46px Arial",
-          fill: "#FAFAD2",
+          font: 'bold 46px Arial',
+          color: '#FAFAD2',
         },
       )
       .setOrigin(0.5)
@@ -33,10 +37,10 @@ export default class StartScene extends Phaser.Scene {
       .text(
         this.cameras.main.centerX,
         this.cameras.main.centerY + 50,
-        "TWO PLAYERS",
+        'TWO PLAYERS',
         {
-          font: "bold 46px Arial",
-          fill: "#FAFAD2",
+          font: 'bold 46px Arial',
+          color: '#FAFAD2',
         },
       )
       .setOrigin(0.5)
@@ -44,17 +48,17 @@ export default class StartScene extends Phaser.Scene {
   }
 
   setEvents() {
-    this.button1.on("pointerdown", this.startGame, this);
-    this.button2.on("pointerdown", this.requestGame, this);
+    this.button1.on('pointerdown', this.startGame, this);
+    this.button2.on('pointerdown', this.requestGame, this);
   }
 
   startGame() {
-    this.scene.start("Game", { client: this.client });
+    this.scene.start('Game', { client: this.client });
   }
 
   requestGame() {
     this.client = new Client();
     this.client.init();
-    this.client.on("game", this.startGame, this);
+    this.client.on('game', this.startGame, this);
   }
 }

@@ -5,34 +5,50 @@ const ACCELERATION = 0.5;
 const SLIDE_ANGLE = 5;
 
 export default class Player {
-  constructor(scene, map, config) {
+  private scene: Phaser.Scene;
+  public map: any;
+  public car: Phaser.Physics.Matter.Sprite;
+  private _velocity: number;
+  private checpoint: number;
+
+  constructor(
+    scene: Phaser.Scene,
+    map: any,
+    config: { position: string; sprite: string },
+  ) {
     this.scene = scene;
     this.map = map;
     const position = this.map.getPlayerPosition(config.position);
     this.car = this.scene.matter.add.sprite(
       position.x,
       position.y,
-      "objects",
+      'objects',
       config.sprite,
-    );
-    this.car.setFixedRotation(true);
+    ) as Phaser.Physics.Matter.Sprite;
+    this.car.setFixedRotation();
     this._velocity = 0;
     this.checpoint = 0;
   }
 
-  get direction() {
-    let direction = DIRECTIONS.NONE;
+  get direction(): number {
+    let direction: number = DIRECTIONS.NONE;
 
-    if (this.scene.cursors.up.isDown) {
+    if (
+      this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
+        .isDown
+    ) {
       direction = DIRECTIONS.FORWARD;
-    } else if (this.scene.cursors.down.isDown) {
+    } else if (
+      this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+        .isDown
+    ) {
       direction = DIRECTIONS.BACKWORD;
     }
 
     return direction;
   }
 
-  get velocity() {
+  get velocity(): number {
     const speed = Math.abs(this._velocity);
     const max = this.getMaxSpeed();
 
@@ -48,53 +64,59 @@ export default class Player {
     return this._velocity;
   }
 
-  get turn() {
-    let turn = TURNS.NONE;
+  get turn(): number {
+    let turn: number = TURNS.NONE;
 
-    if (this.scene.cursors.left.isDown) {
+    if (
+      this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+        .isDown
+    ) {
       turn = TURNS.LEFT;
-    } else if (this.scene.cursors.right.isDown) {
+    } else if (
+      this.scene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+        .isDown
+    ) {
       turn = TURNS.RIGHT;
     }
 
     return turn;
   }
 
-  get angle() {
+  get angle(): number {
     return this.car.angle + (this.turn * SPEED) / 2;
   }
 
-  getVelocityFromAngle() {
+  getVelocityFromAngle(): Phaser.Math.Vector2 {
     const vec2 = new Phaser.Math.Vector2();
     return vec2.setToPolar(this.car.rotation - Math.PI / 2, this.velocity);
   }
 
-  getMaxSpeed() {
+  getMaxSpeed(): number {
     return SPEED * this.map.getTileFriction(this.car);
   }
 
-  slide() {
+  slide(): void {
     this.car.angle += SLIDE_ANGLE;
   }
 
-  move() {
+  move(): void {
     this.car.setAngle(this.angle);
     const velocity = this.getVelocityFromAngle();
     this.car.setVelocity(velocity.x, velocity.y);
     this.checkPositions();
   }
 
-  checkPositions() {
+  checkPositions(): void {
     const checpoint = this.map.getCheckpoint(this.car);
     if (checpoint) {
       this.onCheckpoint(checpoint);
     }
   }
 
-  onCheckpoint(checpoint) {
+  onCheckpoint(checpoint: number) {
     if (checpoint === 1 && this.checpoint === this.map.checkpoints.length) {
       this.checpoint = 1;
-      this.car.emit("lap");
+      this.car.emit('lap');
     } else if (checpoint === this.checpoint + 1) {
       ++this.checpoint;
     }

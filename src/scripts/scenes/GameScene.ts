@@ -1,39 +1,48 @@
-import Phaser from "phaser";
-import Map from "../classes/Map";
-import Player from "../classes/Player";
-import Stats from "../classes/Stats";
-import StatsPanel from "../classes/StatsPanel";
-import StatsPopup from "../classes/StatsPopup";
+import Map from '../classes/Map';
+import Player from '../classes/Player';
+import Stats from '../classes/Stats';
+import StatsPanel from '../classes/StatsPanel';
+import StatsPopup from '../classes/StatsPopup';
 
 const LAPS = 1;
 const CARS = {
   BLUE: {
-    sprite: "car_blue_1",
-    position: "player",
+    sprite: 'car_blue_1',
+    position: 'player',
   },
   RED: {
-    sprite: "car_red_1",
-    position: "enemy",
+    sprite: 'car_red_1',
+    position: 'enemy',
   },
 };
 
-class GameScene extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
+  private client: any;
+  private stats!: Stats;
+  private statsPanel!: StatsPanel;
+  public cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
+  public map!: Map;
+  public player!: Player;
+  public enemy!: Player;
+  public statsPopup!: StatsPopup;
+
   constructor() {
-    super("Game");
+    super('Game');
   }
 
-  init(data) {
-    if (data.client) {
+  init(data: any): void {
+    if (data && data.client) {
       this.client = data.client;
     }
-    this.cursors = this.input.keyboard.createCursorKeys();
+    if (this.input.keyboard)
+      this.cursors = this.input.keyboard.createCursorKeys();
   }
 
-  preload() {
-    this.add.sprite(0, 0, "bg").setOrigin(0);
+  preload(): void {
+    this.add.sprite(0, 0, 'bg').setOrigin(0);
   }
 
-  getCarsConfig() {
+  getCarsConfig(): any {
     let config = {
       player: CARS.BLUE,
       enemy: CARS.RED,
@@ -55,7 +64,7 @@ class GameScene extends Phaser.Scene {
 
     if (this.client) {
       this.enemy = new Player(this, this.map, car.enemy);
-      this.client.on("data", (data) => {
+      this.client.on('data', (data: any) => {
         this.enemy.car.setX(data.x);
         this.enemy.car.setY(data.y);
         this.enemy.car.setAngle(data.angle);
@@ -73,15 +82,18 @@ class GameScene extends Phaser.Scene {
     );
     this.cameras.main.startFollow(this.player.car);
 
-    this.player.car.on("lap", this.onLapComplete, this);
-    this.matter.world.on("collisionactive", (event, a, b) => {
-      if (
-        b.gameObject === this.player.car &&
-        a.gameObject.frame.name === "oil"
-      ) {
-        this.player.slide();
-      }
-    });
+    this.player.car.on('lap', this.onLapComplete, this);
+    this.matter.world.on(
+      'collisionactive',
+      (event: any, a: any, b: any): void => {
+        if (
+          b.gameObject === this.player.car &&
+          a.gameObject.frame.name === 'oil'
+        ) {
+          this.player.slide();
+        }
+      },
+    );
   }
 
   onLapComplete() {
@@ -92,7 +104,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  update(time, dt) {
+  update(time: number, dt: number) {
     this.stats.update(dt);
     this.statsPanel.render();
     this.player.move();
@@ -109,5 +121,3 @@ class GameScene extends Phaser.Scene {
     }
   }
 }
-
-export default GameScene;

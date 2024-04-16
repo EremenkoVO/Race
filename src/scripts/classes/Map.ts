@@ -5,18 +5,27 @@ const ROADS_FRICTION = {
   sand: 0.4,
 };
 
+class Rectangle extends Phaser.Geom.Rectangle {
+  index: any;
+}
+
 export default class Map {
-  constructor(scene) {
+  private scene: Phaser.Scene;
+  public tilemap!: Phaser.Tilemaps.Tilemap;
+  public tileset!: Phaser.Tilemaps.Tileset;
+  public checkpoints!: Rectangle[];
+
+  constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.init();
     this.create();
   }
 
-  init() {
-    this.tilemap = this.scene.make.tilemap({ key: "tilemap" });
+  init(): void {
+    this.tilemap = this.scene.make.tilemap({ key: 'tilemap' });
     this.tileset = this.tilemap.addTilesetImage(
-      "tileset",
-      "tileset",
+      'tileset',
+      'tileset',
       64,
       64,
       0,
@@ -24,39 +33,39 @@ export default class Map {
     );
   }
 
-  create() {
+  create(): void {
     this.createLayers();
     this.createCollisions();
     this.createOils();
     this.createCheckpoints();
   }
 
-  createLayers() {
-    this.tilemap.createStaticLayer("grass", this.tileset);
-    this.tilemap.createStaticLayer("road", this.tileset);
-    this.tilemap.createStaticLayer("sand", this.tileset);
-    this.tilemap.createStaticLayer("ground", this.tileset);
+  createLayers(): void {
+    this.tilemap.createStaticLayer('grass', this.tileset);
+    this.tilemap.createStaticLayer('road', this.tileset);
+    this.tilemap.createStaticLayer('sand', this.tileset);
+    this.tilemap.createStaticLayer('ground', this.tileset);
   }
 
   createCollisions() {
-    this.tilemap.findObject("collisions", (collision) => {
+    this.tilemap.findObject('collisions', (collision: any) => {
       const sprite = this.scene.matter.add.sprite(
         collision.x + collision.width / 2,
         collision.y - collision.height / 2,
-        "objects",
+        'objects',
         collision.name,
       );
       sprite.setStatic(true);
     });
   }
 
-  createOils() {
-    this.tilemap.findObject("oils", (oil) => {
+  createOils(): void {
+    this.tilemap.findObject('oils', (oil: any) => {
       const sprite = this.scene.matter.add.sprite(
         oil.x + oil.width / 2,
         oil.y - oil.height / 2,
-        "objects",
-        "oil",
+        'objects',
+        'oil',
       );
       sprite.setStatic(true);
       sprite.setSensor(true);
@@ -65,30 +74,30 @@ export default class Map {
 
   createCheckpoints() {
     this.checkpoints = [];
-    this.tilemap.findObject("checkpoints", (checkpoint) => {
-      let rectangle = new Phaser.Geom.Rectangle(
+    this.tilemap.findObject('checkpoints', (checkpoint: any): void => {
+      let rectangle: Rectangle = new Rectangle(
         checkpoint.x,
         checkpoint.y,
         checkpoint.width,
         checkpoint.height,
       );
       rectangle.index = checkpoint.properties.find(
-        (property) => property.name === "value",
+        (property: any) => property.name === 'value',
       ).value;
 
       this.checkpoints.push(rectangle);
     });
   }
 
-  getPlayerPosition(positionName) {
+  getPlayerPosition(positionName: string): any {
     return this.tilemap.findObject(positionName, (position) => {
       return position.name === positionName;
     });
   }
 
-  getTileFriction(car) {
-    for (let road in ROADS_FRICTION) {
-      let tile = this.tilemap.getTileAtWorldXY(
+  getTileFriction(car: any): number {
+    for (const road in ROADS_FRICTION) {
+      const tile = this.tilemap.getTileAtWorldXY(
         car.x,
         car.y,
         false,
@@ -104,7 +113,7 @@ export default class Map {
     return GRASS_FRICTION;
   }
 
-  getCheckpoint(car) {
+  getCheckpoint(car: any): number | false {
     const checkpoint = this.checkpoints.find((checkpoint) =>
       checkpoint.contains(car.x, car.y),
     );
