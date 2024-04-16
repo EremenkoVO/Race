@@ -1,5 +1,13 @@
 export default class Stats {
-  constructor(scene, laps) {
+  public scene: Phaser.Scene;
+  public laps: number;
+  public lap: number;
+  public time: number;
+  public timeLap: number;
+  public timeBestLab: number;
+  public timelastLap: number;
+
+  constructor(scene: Phaser.Scene, laps: any) {
     this.scene = scene;
     this.laps = laps;
     this.lap = 1;
@@ -9,11 +17,11 @@ export default class Stats {
     this.timelastLap = 0;
   }
 
-  get complete() {
+  get complete(): boolean {
     return this.lap > this.laps;
   }
 
-  onLapComplete() {
+  onLapComplete(): void {
     ++this.lap;
 
     if (this.timeBestLab === 0 || this.timeLap < this.timeBestLab) {
@@ -24,7 +32,7 @@ export default class Stats {
     this.timeLap = 0;
   }
 
-  update(dt) {
+  update(dt: number) {
     if (!this.complete) {
       const time = dt / 1000;
       this.time += time;
