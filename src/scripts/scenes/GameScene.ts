@@ -1,4 +1,5 @@
 import Map from '../classes/Map';
+import OtherBtns from '../classes/OtherBtns';
 import Player from '../classes/Player';
 import Stats from '../classes/Stats';
 import StatsPanel from '../classes/StatsPanel';
@@ -20,6 +21,7 @@ export default class GameScene extends Phaser.Scene {
   private client: any;
   private stats!: Stats;
   private statsPanel!: StatsPanel;
+  private buttons!: OtherBtns;
   public cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
   public map!: Map;
   public player!: Player;
@@ -34,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
     if (data && data.client) {
       this.client = data.client;
     }
+
     if (this.input.keyboard)
       this.cursors = this.input.keyboard.createCursorKeys();
   }
@@ -58,6 +61,7 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.map = new Map(this);
+    this.buttons = new OtherBtns(this);
     const car = this.getCarsConfig();
 
     this.player = new Player(this, this.map, car.player);
@@ -109,6 +113,7 @@ export default class GameScene extends Phaser.Scene {
     this.statsPanel.render();
     this.player.move();
     this.sync();
+    if (!this.client) this.buttons.restartBtn();
   }
 
   sync() {

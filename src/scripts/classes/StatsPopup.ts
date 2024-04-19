@@ -1,6 +1,6 @@
 import Stats from './Stats';
 
-export default class StatsPopap {
+export default class StatsPopup {
   private scene: Phaser.Scene;
   public stats: Stats;
   public popup!: Phaser.GameObjects.Graphics;

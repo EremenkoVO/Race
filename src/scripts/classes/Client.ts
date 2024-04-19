@@ -1,4 +1,4 @@
-import * as socketIO from 'socket.io-client';
+import socketIO from 'socket.io-client';
 
 const HOST = 'http://localhost:3000';
 
